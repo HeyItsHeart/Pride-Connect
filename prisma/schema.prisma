@@ -1,0 +1,46 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @map("_id") @default(auto())
+  username  String   @unique
+  password  String
+  pronouns  String?
+  sexuality String?
+  gender    String?
+  flags     String[]
+  isFemboy  Boolean  @default(false)
+  bio       String?
+  avatarUrl String?
+  posts     Post[]
+  chats     Chat[]
+}
+
+model Post {
+  id        String   @id @map("_id") @default(auto())
+  content   String
+  imageUrl  String?
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id])
+  createdAt DateTime @default(now())
+  likes     Int      @default(0)
+}
+
+model Chat {
+  id       String   @id @map("_id") @default(auto())
+  members  String[]
+  messages Message[]
+}
+
+model Message {
+  id        String   @id @map("_id") @default(auto())
+  senderId  String
+  text      String
+  timestamp DateTime @default(now())
+}
